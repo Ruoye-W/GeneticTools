@@ -1,59 +1,56 @@
 #include "Gene.hpp"
 
 Gene::Gene(){
-	this->values.reserve(AUTORESERVESIZE);
+	this->Values.reserve(AUTORESERVESIZE);
 }
 
 Gene::Gene(const int& count){
-	this->values.reserve(count);
+	this->Values.reserve(count);
+	this->NumVars = count;
 }
 
-Gene::Gene(const double& init,const int& count){
-	this->values = std::vector<double>(count,init);
+void Gene::EmplaceBack(const double& val){
+	this->Values.emplace_back(val);
 }
 
 void Gene::PushBack(const double& val){
-	this->values.push_back(val);
+	this->Values.push_back(val);
 }
 
 int Gene::Size() const{
-	return this->values.size();
+	return this->Values.size();
 }
 
 void Gene::Print() const{
-	int len = this->values.size();
+	int len = this->Values.size();
 	for( int ii = 0; ii < len; ++ii )
-		std::cout << this->values.at(ii) << "\n";
+		std::cout << this->Values.at(ii) << "\n";
 }
 
 double Gene::Average() const{
-	double avg = 0.0;
-	int len = this->values.size();
-	for( int ii = 0; ii < len; ++ii )
-		avg += this->values.at(ii);
-	return avg / static_cast<double>(len);
+	double avg = std::accumulate(this->Values.begin(),this->Values.end(),0.0);
+	return avg / static_cast<double>(this->NumVars);
 }
 
 double Gene::StdDev() const{
 	double avg = this->Average();
-	int len = this->values.size();
 	double sum = 0.0;
-	for( int ii = 0; ii < len; ++ii )
-		sum += (this->values.at(ii) - avg)*(this->values.at(ii) - avg);
-	sum /= static_cast<double>(len);
+	for( int ii = 0; ii < this->NumVars; ++ii )
+		sum += (this->Values.at(ii) - avg)*(this->Values.at(ii) - avg);
+	sum /= static_cast<double>(this->NumVars);
 	return std::sqrt(sum);
 }
 
 double Gene::operator[](int ii) const{
-	return this->values.at(ii);
+	return this->Values.at(ii);
 }
 
 double& Gene::operator[](int ii) {
-	return this->values.at(ii);
+	return this->Values.at(ii);
 }
 		
 std::ostream& operator << (std::ostream& out,const Gene& gene){
-	for( auto ii : gene.values )
+	for( auto ii : gene.Values )
 		out << ii << " ";
 	return out;
 };
@@ -67,15 +64,14 @@ int Gene::FindMaxValueIndex() const{
 }
 
 std::pair<double,int> Gene::FindMax() const{
-	if( this->values.size() == 0 ){
+	if( this->Values.size() == 0 ){
 		throw "Trying to find max value on an empty gene";
 	}else{
-		double max = this->values.at(0);
-		int len = this->values.size();
+		double max = this->Values.at(0);
 		int maxindex = 0;
-		for( int ii = 0; ii < len; ++ii ){
-			if( this->values.at(ii) > max ){
-				max = this->values.at(ii);
+		for( int ii = 0; ii < this->NumVars; ++ii ){
+			if( this->Values.at(ii) > max ){
+				max = this->Values.at(ii);
 				maxindex = ii;
 			}
 		}
@@ -92,15 +88,14 @@ int Gene::FindMinValueIndex() const{
 }
 
 std::pair<double,int> Gene::FindMin() const{
-	if( this->values.size() == 0 ){
+	if( this->Values.size() == 0 ){
 		throw "Trying to find max value on an empty gene";
 	}else{
-		double min = this->values.at(0);
-		int len = this->values.size();
+		double min = this->Values.at(0);
 		int minindex = 0;
-		for( int ii = 0; ii < len; ++ii ){
-			if( this->values.at(ii) < min ){
-				min = this->values.at(ii);
+		for( int ii = 0; ii < this->NumVars; ++ii ){
+			if( this->Values.at(ii) < min ){
+				min = this->Values.at(ii);
 				minindex = ii;
 			}
 		}

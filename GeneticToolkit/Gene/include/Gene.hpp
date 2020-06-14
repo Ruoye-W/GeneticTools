@@ -5,21 +5,23 @@
 #include <iostream>
 #include <utility>
 #include <cmath>
+#include <algorithm>
 
 #define AUTORESERVESIZE 1024
 
 class Gene{
 	private:
-		std::vector<double> values;
+		std::vector<double> Values;
+		int NumVars;
 	public:
 		Gene();
 		Gene(const int&);
-		Gene(const double&,const int&);
 
 		double operator[](int) const;
 		double& operator[](int);
 
 		void PushBack(const double&);
+		void EmplaceBack(const double&);
 		int Size() const;
 		void Print() const;
 		double Average() const;
