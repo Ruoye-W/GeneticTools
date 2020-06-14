@@ -12,7 +12,7 @@
 
 void ShowUsage(char* );
 void ShowUsage(char* programname){
-	std::cout << "Usage: " << programname << " -n [numvar] -p [popsize] for the num of val to generate" << std::endl;
+	std::cout << "Usage: " << programname << " -n [numvar] -p [popsize] -m [mutrate] -g [gens] -t [tol] for the num of val to generate" << std::endl;
 }
 
 
@@ -21,14 +21,25 @@ int main( int argc, char* argv[]){
 	int vals = 0;
 	int pop = 0;
 	double mut = 0.3;
+	int gen = 0;
+	double tol = 1.0e-3;
 
-	while( (opt = getopt(argc,argv,":n:p:")) != -1 ){
+	while( (opt = getopt(argc,argv,":n:p:g:m:t:")) != -1 ){
 		switch( opt ){
 			case 'n':
 				vals = std::atoi(optarg);
 				break;
 			case 'p':
 				pop = std::atoi(optarg);
+				break;
+			case 'g':
+				gen = std::atoi(optarg);
+				break;
+			case 'm':
+				mut = std::atof(optarg);
+				break;
+			case 't':
+				tol = std::atof(optarg);
 				break;
 			default:
 				std::cout << "Unknown option. See usage" << std::endl;
@@ -37,7 +48,7 @@ int main( int argc, char* argv[]){
 		}
 	}
 
-	if( vals <= 0 ){
+	if( vals <= 0 or pop <= 0 or mut <= 0.0 or tol <= 0 or gen <= 0 ){
 		std::cout << "Need Argument for either inputfile or outputfile or xmlfile. See usage" << std::endl;
 		ShowUsage(argv[0]);
 		exit(EXIT_FAILURE);
@@ -50,17 +61,8 @@ int main( int argc, char* argv[]){
 	}
 
 	std::vector<std::pair<double,double>> bounds(vals,std::pair<double,double>(-1.0,1.0));
-	Gene test(pop);
-	MersenneTwister rand;
-	GASolver solver(vals,pop,bounds,mut); 
-
-	for( auto ii = 0; ii < pop; ++ii )
-		test.EmplaceBack(rand.random());
-
-	std::cout << "Average:  " << test.Average() << "\n";
-	std::cout << "StdDev:   " << test.StdDev() << "\n";
-	std::cout << "MaxValue: " << test.FindMaxValue() << "\n";
-	std::cout << "MinValue: " << test.FindMinValue() << "\n";
+	GASolver solver(vals,pop,bounds,mut,gen,tol); 
+	solver.Print();
 
 	exit(EXIT_SUCCESS);
 }
