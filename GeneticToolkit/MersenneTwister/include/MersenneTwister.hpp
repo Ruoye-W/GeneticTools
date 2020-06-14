@@ -18,8 +18,7 @@
  *
  * http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html.
  */
-class MersenneTwister
-{
+class MersenneTwister{
 	public:
 		MersenneTwister(void);
 		~MersenneTwister(void);
