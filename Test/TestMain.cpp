@@ -12,18 +12,23 @@
 
 void ShowUsage(char* );
 void ShowUsage(char* programname){
-	std::cout << "Usage: " << programname << " -n [num] for the num of val to generate" << std::endl;
+	std::cout << "Usage: " << programname << " -n [numvar] -p [popsize] for the num of val to generate" << std::endl;
 }
 
 
 int main( int argc, char* argv[]){
 	int opt;
 	int vals = 0;
+	int pop = 0;
+	double mut = 0.3;
 
-	while( (opt = getopt(argc,argv,":n:")) != -1 ){
+	while( (opt = getopt(argc,argv,":n:p:")) != -1 ){
 		switch( opt ){
 			case 'n':
 				vals = std::atoi(optarg);
+				break;
+			case 'p':
+				pop = std::atoi(optarg);
 				break;
 			default:
 				std::cout << "Unknown option. See usage" << std::endl;
@@ -44,12 +49,13 @@ int main( int argc, char* argv[]){
 		exit(EXIT_FAILURE);
 	}
 
-	Gene test(vals);
+	std::vector<std::pair<double,double>> bounds(vals,std::pair<double,double>(-1.0,1.0));
+	Gene test(pop);
 	MersenneTwister rand;
-	GASolver solver(1,vals,0.7); 
+	GASolver solver(vals,pop,bounds,mut); 
 
-	for( auto ii = 0; ii < vals; ++ii )
-		test.PushBack(rand.random());
+	for( auto ii = 0; ii < pop; ++ii )
+		test.EmplaceBack(rand.random());
 
 	std::cout << "Average:  " << test.Average() << "\n";
 	std::cout << "StdDev:   " << test.StdDev() << "\n";
