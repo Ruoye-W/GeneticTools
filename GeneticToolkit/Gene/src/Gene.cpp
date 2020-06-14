@@ -5,6 +5,9 @@ Gene::Gene(){
 }
 
 Gene::Gene(const int& count){
+	if( count <= 0 )
+		throw "Gene needs more than zero variables";
+
 	this->Values.reserve(count);
 	this->NumVars = count;
 }
@@ -22,8 +25,7 @@ int Gene::Size() const{
 }
 
 void Gene::Print() const{
-	int len = this->Values.size();
-	for( int ii = 0; ii < len; ++ii )
+	for(   int ii = 0; ii < this->NumVars; ++ii )
 		std::cout << this->Values.at(ii) << "\n";
 }
 
@@ -35,7 +37,7 @@ double Gene::Average() const{
 double Gene::StdDev() const{
 	double avg = this->Average();
 	double sum = 0.0;
-	for( int ii = 0; ii < this->NumVars; ++ii )
+	for(   int ii = 0; ii < this->NumVars; ++ii )
 		sum += (this->Values.at(ii) - avg)*(this->Values.at(ii) - avg);
 	sum /= static_cast<double>(this->NumVars);
 	return std::sqrt(sum);
@@ -69,7 +71,7 @@ std::pair<double,int> Gene::FindMax() const{
 	}else{
 		double max = this->Values.at(0);
 		int maxindex = 0;
-		for( int ii = 0; ii < this->NumVars; ++ii ){
+		for(   int ii = 0; ii < this->NumVars; ++ii ){
 			if( this->Values.at(ii) > max ){
 				max = this->Values.at(ii);
 				maxindex = ii;
@@ -102,4 +104,13 @@ std::pair<double,int> Gene::FindMin() const{
 		return std::make_pair(min,minindex);
 	}
 
+}
+		
+Gene& Gene::operator=(const Gene& other){
+	if( this != &other ){
+		this->Values = other.Values;
+		this->NumVars = other.NumVars;
+	}
+
+	return *this;
 }

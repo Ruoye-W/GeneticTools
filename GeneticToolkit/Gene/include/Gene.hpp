@@ -36,6 +36,7 @@ class Gene{
 		int FindMinValueIndex() const;
 
 		friend std::ostream& operator << (std::ostream&,const Gene&);
+		Gene& operator=(const Gene&);
 };
 
 #endif
